@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env variables
+.env
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Build output
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+
+# nodemon
+nodemon-debug.log
+
+# Misc
+package-lock.json
+yarn.lock

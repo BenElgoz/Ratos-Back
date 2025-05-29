@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  RESTAURATEUR
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  username         String    @unique
+  hashedPassword   String
+  role             Role
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  clientProfile      ClientProfile?
+  restaurateurProfile RestaurateurProfile?
+
+  notifications    Notification[]
+  favorites        Favorite[]
+  activations      Activation[]
+}
+
+model ClientProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  firstName String
+  lastName  String
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model RestaurateurProfile {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  phoneNumber String?
+  
+  user        User       @relation(fields: [userId], references: [id])
+  restaurant  Restaurant?
+}
+
+model Restaurant {
+  id             String     @id @default(uuid())
+  name           String
+  description    String
+  address        String
+  latitude       Float
+  longitude      Float
+  openingHours   String
+  googleMapsUrl  String
+  mainImageUrl   String
+  restaurateurId String     @unique
+
+  restaurateur   RestaurateurProfile @relation(fields: [restaurateurId], references: [id])
+  dishes         Dish[]
+  promotions     Promotion[]
+  activations    Activation[]
+  favorites      Favorite[]
+}
+
+model Dish {
+  id            String   @id @default(uuid())
+  restaurantId  String
+  name          String
+  description   String
+  price         Float
+  allergens     String[]
+  imageUrl      String?
+
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Promotion {
+  id             String   @id @default(uuid())
+  restaurantId   String
+  title          String
+  description    String
+  startDate      DateTime
+  endDate        DateTime
+  maxActivations Int?
+  active         Boolean  @default(true)
+  schedule       String?
+
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
+  activations    Activation[]
+}
+
+model Activation {
+  id            String   @id @default(uuid())
+  userId        String
+  promotionId   String
+  restaurantId  String
+  code          String   @unique
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+  used          Boolean  @default(false)
+
+  user          User       @relation(fields: [userId], references: [id])
+  promotion     Promotion  @relation(fields: [promotionId], references: [id])
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Favorite {
+  id           String   @id @default(uuid())
+  userId       String
+  restaurantId String
+
+  user         User       @relation(fields: [userId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@unique([userId, restaurantId])
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String
+  type           String
+  sentAt         DateTime @default(now())
+  viewed         Boolean  @default(false)
+
+  user           User     @relation(fields: [userId], references: [id])
+}
