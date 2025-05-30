@@ -6,11 +6,25 @@ import authRoutes from './auth/auth.routes';
 dotenv.config();
 
 const app = express();
+
+const allowedOrigins = [
+  'http://localhost:3000', // front local
+  'https://ratos.fr/' // domaine
+];
+
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
-}));app.use(express.json());
+}));
+
+app.use(express.json());
 
 app.use('/auth', authRoutes);
 
