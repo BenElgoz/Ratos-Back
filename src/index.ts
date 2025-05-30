@@ -11,7 +11,7 @@ app.use(cors({
   origin: '*',
 }));app.use(express.json());
 
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 // app.use('/api/protected', protectedRoutes);
 
 app.get('/', (req: Request, res: Response) => {

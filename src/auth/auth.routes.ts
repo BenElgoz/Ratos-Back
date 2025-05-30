@@ -65,7 +65,8 @@ router.post('/signup', async (req: Request, res: Response): Promise<void> => {
           address: restaurant?.address,
           latitude: restaurant?.latitude,
           longitude: restaurant?.longitude,
-          openingHours: JSON.parse(restaurant?.openingHours || '{}'),
+          // openingHours: JSON.parse(restaurant?.openingHours || '{}'),
+          openingHours: restaurant?.openingHours || '{}',
           googleMapsUrl: restaurant?.googleMapsUrl,
           mainImageUrl: restaurant?.mainImageUrl,
         },
@@ -79,10 +80,10 @@ router.post('/signup', async (req: Request, res: Response): Promise<void> => {
     );
     
     res.status(201).json({ token, role: newUser.role });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur.' });
-  }
+  } catch (err: any) {
+  console.error('❌ SIGNUP ERROR:', err.message, err.stack);
+  res.status(500).json({ error: 'Erreur serveur.', details: err.message });
+}
 });
 
 // POST /login
