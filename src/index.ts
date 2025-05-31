@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './auth/auth.routes';
+import restaurantRoutes from './user/restaurant.routes'
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/auth', authRoutes);
+app.use('/', restaurantRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('RATOS BACK 🧀 API is running 🚀');
