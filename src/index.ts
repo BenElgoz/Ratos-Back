@@ -30,7 +30,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/', restaurantRoutes)
-app.use('/restaurant', promotionRoutes);
+app.use('/', promotionRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('RATOS BACK 🧀 API is running 🚀');
