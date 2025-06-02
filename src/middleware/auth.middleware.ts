@@ -12,20 +12,26 @@ export interface AuthenticatedRequest extends Request {
   user?: AuthPayload;
 }
 
-export function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export function authenticateToken(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // "Bearer token"
+  const token = authHeader && authHeader.split(' ')[1]; // format "Bearer token"
 
   if (!token) {
-    return res.status(401).json({ error: 'Token manquant' });
+    res.status(401).json({ error: 'Token manquant' });
+    return;
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as AuthPayload;
     req.user = decoded;
-    next();
+    return next();
   } catch (err) {
     console.error(err);
-    return res.status(403).json({ error: 'Token invalide ou expiré' });
+    res.status(403).json({ error: 'Token invalide ou expiré' });
+    return;
   }
 }

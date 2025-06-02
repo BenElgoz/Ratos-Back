@@ -85,9 +85,10 @@ model Promotion {
   description    String
   startDate      DateTime
   endDate        DateTime
-  maxActivations Int?
   active         Boolean  @default(true)
   schedule       String?
+  imageUrl       String?
+  offerType      String?
 
   restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
   activations    Activation[]
