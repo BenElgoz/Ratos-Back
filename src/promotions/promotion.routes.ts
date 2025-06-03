@@ -5,6 +5,61 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.midd
 const router = express.Router();
 const prisma = new PrismaClient();
 
+router.get(
+  '/promotions/:id',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const offer = await prisma.promotion.findUnique({
+      where: { id },
+    });
+
+    if (!offer) {
+      res.status(404).json({ error: 'Offre introuvable' });
+      return;
+    }
+
+    res.json(offer);
+  }
+);
+
+router.put(
+  '/promotions/:id',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      startDate,
+      endDate,
+      imageUrl,
+      offerType,
+      schedule,
+    } = req.body;
+
+    try {
+      const updated = await prisma.promotion.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          imageUrl,
+          offerType,
+          schedule,
+        },
+      });
+
+      res.status(200).json(updated);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Erreur serveur lors de la mise à jour' });
+    }
+  }
+);
+
 router.post(
   '/promotions',
   authenticateToken,

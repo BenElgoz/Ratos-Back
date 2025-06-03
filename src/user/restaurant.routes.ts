@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.middleware';
 
@@ -23,6 +23,46 @@ router.get('/restaurants', async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+
+// ROUTE PUBLIQUE : détails d’un restaurant par ID
+router.get(
+  '/restaurants/:id',
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    try {
+      const restaurant = await prisma.restaurant.findUnique({
+        where: { id },
+        include: {
+          promotions: {
+            where: { active: true },
+            orderBy: { startDate: 'desc' },
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              imageUrl: true,
+            },
+          },
+        },
+      });
+
+      if (!restaurant) {
+        res.status(404).json({ error: 'Restaurant non trouvé' });
+        return;
+      }
+
+      res.status(200).json({
+        name: restaurant.name,
+        mainImageUrl: restaurant.mainImageUrl,
+        promotions: restaurant.promotions,
+      });
+    } catch (err) {
+      console.error('❌ ERREUR /restaurants/:id :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  }
+);
 
 // ROUTE PRIVÉE : infos du restaurateur + promos actives
 router.get(
@@ -57,6 +97,8 @@ router.get(
               title: true,
               startDate: true,
               endDate: true,
+              imageUrl: true,
+              offerType: true,
             },
           },
         },
