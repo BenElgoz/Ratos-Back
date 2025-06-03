@@ -10,8 +10,8 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  'http://localhost:3000', // front local
-  'https://ratos.fr/' // domaine
+  'http://localhost:3000', 
+  'https://ratos.fr/' 
 ];
 
 app.use(cors({
