@@ -12,7 +12,10 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://ratos.fr/',
+  'https://ratos.fr/',
+  'http://www.ratos.fr/',
   'https://www.ratos.fr/',
+  'http://landing.ratos.fr/',
   'https://landing.ratos.fr/'
 ];
 
